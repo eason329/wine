@@ -1,0 +1,161 @@
+1. 簡介
+
+Wine 是一個使 Microsoft Windows 程序（包括 DOS、Windows 3.x、Win32
+以及 Win64 可執行程式）能在 Unix 上執行的應用程式。
+它包括一個用來載入並執行 Microsoft Windows 二進制程式的程式載入器，
+以及一個使用 Unix，X11 或 Mac 的相等功能來實現 Windows API 呼叫的
+函式庫（稱為 Winelib）。這個庫也可用來將 Windows 代碼移植為原生 Unix
+可執行程序。
+
+Wine 是自由軟體，在 GNU LGPL 條款下發佈；請查看 LICENSE 檔案以了解
+詳情。
+
+
+2. 快速開始
+
+在 Wine 原始碼的頂層目錄（即包含本文件的目錄 [註：這裡指的是頂層的
+README 檔案]），然後執行：
+
+./configure
+make
+
+接下來，您可以安裝 Wine:
+
+make install
+
+或者從建置目錄直接執行 Wine:
+
+./wine notepad
+
+請使用「wine [程序名稱]」的語法來執行程式。如果您要了解更多資訊或
+解決遇到的問題，您可以繼續閱讀本文件餘下的部分，閱讀 Wine 的手冊頁，
+或瀏覽我們的網站：https://www.winehq.org 找到充足的資訊。
+
+
+3. 系統需求
+
+要成功編譯並執行 Wine，您必須使用下列操作系統的其中之一：
+
+  Linux 2.0.36 或更新版本
+  FreeBSD 8.0 或更新版本
+  Solaris x86 9 或更新版本
+  NetBSD-current
+  Mac OS X 10.8 或更新版本
+
+由於執行 Wine 需要核心級别的執行緒支援，只有上述提及的操作系統能被支援。
+其它支援核心執行緒的操作系統可能在未來得到支援。
+
+FreeBSD 資訊：
+  Wine 通常無法在舊於 FreeBSD 8.0 的系統上正常工作。
+  請查看 https://wiki.freebsd.org/Wine 以了解更多資訊。
+
+Solaris 資訊：
+  大部分情況下，您可能需要使用 GNU 工具鏈（gcc、gas 等）來建置 Wine。
+  警告：安裝 gas *不能* 確保它能被 gcc 使用。您可能需要在安裝 gas 
+  以後重新編譯 gcc，或是將 cc、as 和 ld 符號連結至 GNU 工具。
+
+NetBSD 資訊：
+  請確保您在系統核心中啟用了 USER_LDT、SYSVSHM、SYSVSEM 和 SYSVMSG 選項。
+
+Mac OS X 資訊:
+  您需要 Xcode/Xcode Command Line Tools 或是 Apple cctools。
+  編譯 Wine 的最低要求是 clang 3.8 以及 MacOSX10.10.sdk 和 mingw-w64 v8。
+  MacOSX10.14.sdk 或更新的版本則只能編譯 wine64。
+
+
+支援的檔案系統：
+  Wine 應該能在大多數檔案系統下運作。我們亦收到一些使用 Samba 存取
+  檔案時發生相容性問題的報告。另外，NTFS 不能提供一些應用程式所需要
+  的某些檔案系統的特定功能。因此，建議您使用原生的 Unix 檔案系統。
+
+基本要求：
+  您需要安裝 X11 開發用檔案 (在 Debian 中可能被稱為 xorg-dev，
+  在 Red Hat 中可能被稱為 libX11-devel)。
+
+  當然，您同樣需要「make」工具 (一般應該為 GNU make)。
+
+  您也需要 flex 的 2.5.33 版或更新版本，以及 bison 工具。
+
+可選的支援庫：
+  當無法在您的系統中找到可選的函式庫時，configure 會顯示對應的提示訊息。
+  請查看 https://wiki.winehq.org/Recommended_Packages 以了解您應該安裝
+  的軟體套件的資訊。在 64 位平臺中，您必須確保對應函式庫的 32 位版本
+  已經安裝。
+
+
+4. 編譯
+
+如果您選擇不使用 wineinstall 工具，請執行下列的命令來建置 Wine：
+
+./configure
+make
+
+這將會建置「wine」程式和大量的支援庫/二進制檔案。
+「wine」程式可以載入並執行 Windows 可執行檔案。
+「libwine」 (「Winelib」) 函式庫可用於在 Unix 下編譯並連結 Windows
+程式的原始碼。
+
+如要查看編譯設定選項，請使用「./configure --help」。
+
+
+5. 安裝
+
+一旦 Wine 已被正確建置，您便可以進行「make install」；該操作會將 wine
+可執行檔案、函式庫、Wine 手冊頁以及其它需要使用的檔案安裝到系統。
+
+請記得事先解除安裝任何先前安裝過且會引起衝突的 Wine 軟體集。
+請在安裝前嘗試「dpkg -r wine」、「rpm -e wine」或「make uninstall」。
+
+安裝完成後，您可以執行「winecfg」設定工具。請参考 https://www.winehq.org/
+網站中的支援頁面以了解設定技巧。
+
+
+6. 執行程序
+
+當您使用 Wine 時，您可以指定整個可執行檔案的路徑，或是只指定檔案名稱。
+
+例如，如要執行 Notepad：
+
+    wine notepad            (使用註冊表中指定的搜尋路徑
+    wine notepad.exe         來定位檔案)
+
+    wine c:\\windows\\notepad.exe      (使用 DOS 檔案名稱語法)
+
+    wine ~/.wine/drive_c/windows/notepad.exe  (使用 Unix 檔案名稱語法)
+
+    wine notepad.exe readme.txt          (以參數呼叫程序)
+
+Wine 並不是完美的，所以某些程式可能會崩潰。如果發生了這樣的情況，
+您會得到一份崩潰記錄。您應該在提交程式漏洞時附上這份記錄。
+
+
+7. 取得更多資訊
+
+WWW:	有關 Wine 的資訊可以在 WineHQ 網站：https://www.winehq.org/
+	內找到。包括：各類 Wine 相關的指南、應用程式資料庫 (AppDB)、
+	漏洞跟蹤管理系統等。這個網站是您最佳的起始之處。
+
+FAQ:	Wine 常見問題位於 https://www.winehq.org/FAQ
+
+Wiki:	Wine Wiki 的網址是 https://wiki.winehq.org
+
+郵件列表：
+	這裡有數個服務 Wine 用戶和開發者的郵件列表；
+	請查看 https://www.winehq.org/forums 以了解更多資訊。
+
+Bugs:	請向位於 https://bugs.winehq.org 的 Wine Bugzilla 提交
+	漏洞報告。請在提交報告前先搜尋 bugzilla 資料庫，檢查先前
+	是否已有類似的已知問題以免重複報告，並跟蹤這些問題的修復狀況。
+
+IRC:	您可以在 irc.libera.chat 的 #WineHQ 頻道取得即時線上協助。
+
+Git:	目前 Wine 的開發樹可經由 Git 取得。
+	請前往 https://www.winehq.org/git 以了解更多資訊。
+
+如果您在代碼中新增了某些內容，或是修復了某個 bug，請發送對應的修補檔
+(建議使用 git-format-patch 生成) 到郵件列表 wine-devel@winehq.org，
+以便我們將其加入下一個版本中。
+
+--
+Alexandre Julliard
+julliard@winehq.org
