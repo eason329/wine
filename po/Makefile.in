@@ -46,4 +46,5 @@ PO_SRCS = \
 	uk.po \
 	wa.po \
 	zh_CN.po \
+	zh_HK.po \
 	zh_TW.po
